@@ -5,7 +5,6 @@ import androidx.annotation.RawRes
 import com.google.gson.Gson
 import otus.homework.customview.data.repository.data.CostRaw
 import otus.homework.customview.domain.model.Cost
-import otus.homework.customview.domain.model.CostCategoryType
 import java.io.InputStreamReader
 import javax.inject.Inject
 
@@ -30,8 +29,8 @@ class CostMapper @Inject constructor(
                 id = it.id,
                 name = it.name,
                 amount = it.amount,
-                category = CostCategoryType.from(it.category),
-                day = it.getDate(it.time, "MM-dd")
+                category = it.category,
+                time = it.time
             )
         }
     }

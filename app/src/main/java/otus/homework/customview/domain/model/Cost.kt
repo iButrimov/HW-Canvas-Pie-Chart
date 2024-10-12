@@ -4,6 +4,6 @@ data class Cost(
     val id: Long,
     val name: String,
     val amount: Int,
-    val category: CostCategoryType,
-    val day: String
+    val category: String,
+    val time: Long
 )

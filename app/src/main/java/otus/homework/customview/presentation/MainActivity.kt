@@ -1,7 +1,6 @@
 package otus.homework.customview.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -10,7 +9,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import otus.homework.customview.databinding.ActivityMainBinding
-import otus.homework.customview.domain.model.Cost
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -45,8 +43,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun renderDataState(state: CostViewState.DataState) {
-        binding.costCategory.setData(state.costList, state.daysQty)
-        Log.d("CHECK_LIST", "onCreate: list: ${state.costList}")
+        binding.costCategory.setData(state.costList)
     }
 
 }
