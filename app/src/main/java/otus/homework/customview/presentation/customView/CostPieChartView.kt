@@ -9,7 +9,10 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import otus.homework.customview.R
@@ -17,6 +20,9 @@ import otus.homework.customview.domain.model.Cost
 import otus.homework.customview.domain.model.CostCategoryType
 import otus.homework.customview.presentation.customView.states.CostPieChartState
 import otus.homework.customview.px
+import kotlin.math.abs
+import kotlin.math.acos
+import kotlin.math.sqrt
 
 class CostPieChartView @JvmOverloads constructor(
     context: Context,
@@ -34,6 +40,68 @@ class CostPieChartView @JvmOverloads constructor(
     }
 
     private val sectors: MutableList<PieChartCategoryInfo> = mutableListOf()
+
+    private val gestureDetector =
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+
+            override fun onDown(e: MotionEvent): Boolean {
+                val centerX = (width / 2).toFloat()
+                val centerY = (height / 2).toFloat()
+                val circleRadius = (width / 2).toFloat()
+                val holeRadius = circleRadius / 4
+
+                val xToCenter = abs(centerX - e.x)
+                val yToCenter = abs(centerY - e.y)
+
+                // Проверка что точка нажатия внутри отверстия круговой диаграммы
+                if (xToCenter <= holeRadius && yToCenter <= holeRadius) return false
+
+                // Проверка что точка нажатия вне круговой диаграммы
+                if (isOutsideCircle(centerX, centerY, circleRadius, e)) {
+                    return false
+                }
+
+                // считаем угол
+                val angle = calculateAngle(centerX, centerY, circleRadius, e)
+
+                sectors.forEach {
+                    if (it.startAngle <= angle && it.endAngle > angle) {
+                        Toast.makeText(context, it.name, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                return true
+            }
+
+            private fun isOutsideCircle(
+                centerX: Float,
+                centerY: Float,
+                radius: Float,
+                e: MotionEvent
+            ): Boolean {
+                val distanceSquared =
+                    (centerX - e.x) * (centerX - e.x) + (centerY - e.y) * (centerY - e.y)
+                return distanceSquared > radius * radius
+            }
+
+            private fun calculateAngle(
+                centerX: Float,
+                centerY: Float,
+                radius: Float,
+                e: MotionEvent
+            ): Float {
+                val xToCenter = e.x - centerX
+                val yToCenter = e.y - centerY
+                val b = sqrt(xToCenter * xToCenter + yToCenter * yToCenter)
+                val a = radius
+                val c =
+                    sqrt((width - e.x) * (width - e.x) + abs(centerY - e.y) * abs(centerY - e.y))
+
+                var angle = acos((a * a + b * b - c * c) / (2 * a * b)) * (180 / Math.PI)
+                if (e.y < centerY) angle = 360 - angle
+                return angle.toFloat()
+            }
+        })
 
     init {
         setWillNotDraw(false)
@@ -53,9 +121,14 @@ class CostPieChartView @JvmOverloads constructor(
         invalidate()
     }
 
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return true
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val size = resolveSize(chartSize, widthMeasureSpec)
-        setMeasuredDimension(size, size) // Making the view a square (width = height)
+        setMeasuredDimension(size, size)
     }
 
     @SuppressLint("DrawAllocation")
