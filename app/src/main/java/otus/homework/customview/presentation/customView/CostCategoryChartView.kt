@@ -6,6 +6,7 @@ import android.graphics.CornerPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.os.Build
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import otus.homework.customview.domain.model.Cost
 import otus.homework.customview.domain.model.CostCategoryType
+import otus.homework.customview.presentation.customView.states.CostCategoryChartState
 import otus.homework.customview.px
 import java.time.Duration
 import java.time.Instant
@@ -32,6 +34,19 @@ class CostCategoryChartView @JvmOverloads constructor(
 
     private val path = Path()
     private var currentStrokePaint = Paint()
+
+    override fun onSaveInstanceState(): Parcelable {
+        val superState = super.onSaveInstanceState()
+        return CostCategoryChartState(superState, costsByCategory)
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val chartState = state as? CostCategoryChartState
+        super.onRestoreInstanceState(chartState?.superState ?: state)
+
+        costsByCategory = chartState?.data ?: emptyMap()
+        invalidate()
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {

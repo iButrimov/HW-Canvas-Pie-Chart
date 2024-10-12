@@ -16,4 +16,6 @@
     <color name="category_indigo">#0000FF</color>
     <color name="category_purple">#8A2BE2</color>
     <color name="category_grey">#A9A9A9</color>
+
+    <color name="category_transparent">#FFFFFF</color>
 </resources>

@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderDataState(state: CostViewState.DataState) {
         binding.costCategory.setData(state.costList)
+        binding.pieChart.setData(state.costList)
     }
 
 }
