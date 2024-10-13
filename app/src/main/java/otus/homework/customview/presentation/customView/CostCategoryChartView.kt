@@ -90,7 +90,6 @@ class CostCategoryChartView @JvmOverloads constructor(
             }
             currentStrokePaint = createPaintByCategory(currentCategory)
             canvas.drawPath(path, currentStrokePaint)
-            canvas.drawPath(path, currentStrokePaint)
         }
     }
 
